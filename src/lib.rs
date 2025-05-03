@@ -1,3 +1,5 @@
+mod util;
+
 mod array_deque;
 mod array_queue;
 mod array_stack;

@@ -6,7 +6,7 @@ pub struct ArrayStack<T> {
 
 impl<T> ArrayStack<T> {
     pub fn new(length: usize) -> Self {
-        let a = Self::allocate(length);
+        let a = crate::util::allocate(length);
         Self { a, n: 0 }
     }
 
@@ -57,12 +57,8 @@ impl<T> ArrayStack<T> {
         x
     }
 
-    fn allocate(length: usize) -> Box<[Option<T>]> {
-        std::iter::repeat_with(|| None).take(length).collect()
-    }
-
     fn resize(&mut self) {
-        let mut b = Self::allocate(std::cmp::max(2 * self.n, 1));
+        let mut b = crate::util::allocate(std::cmp::max(2 * self.n, 1));
         unsafe {
             std::ptr::copy(self.a.as_ptr(), b.as_mut_ptr(), self.n);
         }

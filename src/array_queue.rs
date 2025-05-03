@@ -7,7 +7,7 @@ pub struct ArrayQueue<T> {
 
 impl<T> ArrayQueue<T> {
     pub fn new(length: usize) -> Self {
-        let a = Self::allocate(length);
+        let a = crate::util::allocate(length);
         Self { a, j: 0, n: 0 }
     }
 
@@ -46,12 +46,8 @@ impl<T> ArrayQueue<T> {
         x
     }
 
-    fn allocate(n: usize) -> Box<[Option<T>]> {
-        std::iter::repeat_with(|| None).take(n).collect()
-    }
-
     fn resize(&mut self) {
-        let mut b = Self::allocate(std::cmp::max(2 * self.n, 1));
+        let mut b = crate::util::allocate(std::cmp::max(2 * self.n, 1));
         for k in 0..self.n {
             b[k] = self.a.get_mut((self.j + k) % self.a.len()).unwrap().take();
         }
