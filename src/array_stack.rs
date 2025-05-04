@@ -10,6 +10,10 @@ impl<T> ArrayStack<T> {
         Self { a, n: 0 }
     }
 
+    pub(crate) fn from_raw(a: Box<[Option<T>]>, n: usize) -> Self {
+        Self { a, n }
+    }
+
     pub fn length(&self) -> usize {
         self.a.len()
     }
@@ -20,6 +24,10 @@ impl<T> ArrayStack<T> {
 
     pub fn get(&self, i: usize) -> Option<&T> {
         self.a.get(i)?.as_ref()
+    }
+
+    pub(crate) fn take(&mut self, i: usize) -> Option<T> {
+        self.a.get_mut(i)?.take()
     }
 
     pub fn set(&mut self, i: usize, x: T) -> Option<T> {
