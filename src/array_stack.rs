@@ -26,6 +26,10 @@ impl<T> ArrayStack<T> {
         self.a.get(i)?.as_ref()
     }
 
+    pub(crate) fn get_mut(&mut self, i: usize) -> Option<&mut T> {
+        self.a.get_mut(i)?.as_mut()
+    }
+
     pub(crate) fn take(&mut self, i: usize) -> Option<T> {
         self.a.get_mut(i)?.take()
     }
@@ -38,12 +42,9 @@ impl<T> ArrayStack<T> {
         if self.n + 1 > self.a.len() {
             self.resize();
         }
-        unsafe {
-            std::ptr::copy(
-                self.a[i..self.n].as_ptr(),
-                self.a[i + 1..self.n + 1].as_mut_ptr(),
-                self.n - i,
-            )
+
+        for j in (i + 1..=self.n).rev() {
+            self.a.swap(j, j - 1);
         }
         self.a[i] = Some(x);
         self.n += 1;
@@ -51,12 +52,8 @@ impl<T> ArrayStack<T> {
 
     pub fn remove(&mut self, i: usize) -> Option<T> {
         let x = self.a.get_mut(i)?.take();
-        unsafe {
-            std::ptr::copy(
-                self.a[i + 1..self.n].as_ptr(),
-                self.a[i..self.n - 1].as_mut_ptr(),
-                self.n - i,
-            );
+        for j in i..self.n - 1 {
+            self.a.swap(j, j + 1);
         }
         self.n -= 1;
         if self.a.len() >= 3 * self.n {
@@ -66,11 +63,11 @@ impl<T> ArrayStack<T> {
     }
 
     fn resize(&mut self) {
-        let mut b = crate::util::allocate(std::cmp::max(2 * self.n, 1));
-        unsafe {
-            std::ptr::copy(self.a.as_ptr(), b.as_mut_ptr(), self.n);
+        let b = crate::util::allocate(std::cmp::max(2 * self.n, 1));
+        let old_a = std::mem::replace(&mut self.a, b);
+        for (i, v) in old_a.into_iter().enumerate().take(self.n) {
+            self.a[i] = v;
         }
-        self.a = b;
     }
 }
 
