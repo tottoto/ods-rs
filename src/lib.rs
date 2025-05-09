@@ -6,6 +6,7 @@ mod array_stack;
 mod dual_array_deque;
 mod rootish_array_stack;
 
+mod doubly_linked_list;
 mod singly_linked_list;
 
 pub use array_deque::ArrayDeque;
@@ -14,4 +15,5 @@ pub use array_stack::ArrayStack;
 pub use dual_array_deque::DualArrayDeque;
 pub use rootish_array_stack::RootishArrayStack;
 
+pub use doubly_linked_list::DLList;
 pub use singly_linked_list::SLList;
